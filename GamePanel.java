@@ -2,12 +2,14 @@ package com.weijiez.gameSnake;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements KeyListener {
 
     // define a snake
     int length;
-    int status = 0; // 0 - stop, 1 - begin
+    boolean isStart = false;
     int[] snakeX = new int[600]; // body on x-axis
     int[] snakeY = new int[600]; // body on y-axis
     String dir;
@@ -22,6 +24,8 @@ public class GamePanel extends JPanel {
 
     public GamePanel() {
         init();
+        setFocusable(true); // focus on the game
+        addKeyListener(this);
     }
 
     // this is a pen, and we use this pen to paint
@@ -52,10 +56,36 @@ public class GamePanel extends JPanel {
         }
 
         // game status
-        if(status == 0) {
+        if(!isStart) {
             g.setColor(Color.white);
             g.setFont(new Font("Times New Roman", Font.BOLD, 40));
             g.drawString("press space key to start the game", 150, 300);
         }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+        if(keyCode == KeyEvent.VK_SPACE) {
+            isStart = !isStart;
+            repaint();
+        }
+    }
+
+
+
+
+
+
+
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }
