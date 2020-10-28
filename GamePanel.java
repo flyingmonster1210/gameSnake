@@ -2,14 +2,17 @@ package com.weijiez.gameSnake;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class GamePanel extends JPanel implements KeyListener {
+public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     // define a snake
     int length;
     boolean isStart = false;
+    Timer timer = new Timer(120, this); // lister to this activity, and refresh it every 100ms
     int[] snakeX = new int[600]; // body on x-axis
     int[] snakeY = new int[600]; // body on y-axis
     String dir;
@@ -20,22 +23,23 @@ public class GamePanel extends JPanel implements KeyListener {
         snakeX[1] = 75; snakeY[1] = 100;
         snakeX[2] = 50; snakeY[2] = 100;
         dir = "Right"; // initial direction is right
+        timer.start();
     }
 
     public GamePanel() {
         init();
         setFocusable(true); // focus on the game
-        addKeyListener(this);
+        addKeyListener(this); // listening to the key board
     }
 
     // this is a pen, and we use this pen to paint
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         setBackground(Color.WHITE);
 
         g.fillRect(25, 75, 850, 600);
-
 
         switch (dir) {
             case "Right":
@@ -63,13 +67,56 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
 
+    // listening to the keyboard
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        if(keyCode == KeyEvent.VK_SPACE) {
-            isStart = !isStart;
+        switch (keyCode) {
+            case KeyEvent.VK_SPACE:
+                isStart = !isStart;
+                repaint();
+                break;
+            case KeyEvent.VK_LEFT:
+                dir = "Left";
+                break;
+            case KeyEvent.VK_UP:
+                dir = "Up";
+                break;
+            case KeyEvent.VK_DOWN:
+                dir = "Down";
+                break;
+            case KeyEvent.VK_RIGHT:
+                dir = "Right";
+                break;
+            default:
+                break;
+        }
+    }
+
+    //
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(isStart) {
+            // move the body
+            for(int i = length - 1; i > 0; i--) {
+                snakeX[i] = snakeX[i - 1];
+                snakeY[i] = snakeY[i - 1];
+            }
+
+            if(dir.equals("Right")) snakeX[0] += 25;
+            else if(dir.equals("Left")) snakeX[0] -= 25;
+            else if(dir.equals("Up")) snakeY[0] -= 25;
+            else if(dir.equals("Down")) snakeY[0] += 25;
+
+            if(snakeX[0] > 850) snakeX[0] = 25;
+            else if(snakeX[0] < 25) snakeX[0] = 850;
+            if(snakeY[0] < 75) snakeY[0] = 650;
+            else if(snakeY[0] > 650) snakeY[0] = 75;
+
+
             repaint();
         }
+        timer.start();
     }
 
 
